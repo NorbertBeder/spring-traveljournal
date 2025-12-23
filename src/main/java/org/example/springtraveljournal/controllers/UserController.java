@@ -4,17 +4,19 @@ import jakarta.validation.Valid;
 import org.example.springtraveljournal.models.dtos.request.LoginDto;
 import org.example.springtraveljournal.models.dtos.request.UserRequestCreateDto;
 import org.example.springtraveljournal.models.dtos.request.UserRequestUpdateDto;
+import org.example.springtraveljournal.models.dtos.response.LoginResponseDto;
 import org.example.springtraveljournal.models.dtos.response.UserResponseDto;
 import org.example.springtraveljournal.models.entities.User;
 import org.example.springtraveljournal.services.UserService;
-import org.example.springtraveljournal.util.UserMapper;
+import org.example.springtraveljournal.util.mappers.UserMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("travel-journal/")
+@RequestMapping("/travel-journal/users")
 public class UserController {
 
     private final UserService userService;
@@ -25,30 +27,37 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/register")
     public UserResponseDto createUser(@RequestBody @Valid UserRequestCreateDto userRequest) {
         User user = userService.createUser(userRequest);
         return userMapper.userToUserResponseDto(user);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     public UserResponseDto getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
         return userMapper.userToUserResponseDto(user);
     }
 
-    @PutMapping("/user/{id}")
-    public UserResponseDto updateUser(@PathVariable Long id, @RequestBody @Valid UserRequestUpdateDto userRequest) {
-        User user = userService.updateUser(id, userRequest);
+    @PatchMapping("/{id}")
+    public UserResponseDto updateUserPartial(@PathVariable Long id, @RequestBody @Valid UserRequestUpdateDto userRequest) {
+        User user = userService.updateUserPartial(id, userRequest);
         return userMapper.userToUserResponseDto(user);
     }
 
-    @DeleteMapping("/user/{id}")
+    @PutMapping("/{id}")
+    public UserResponseDto updateUserAll(@PathVariable Long id, @RequestBody @Valid UserRequestCreateDto userRequest) {
+        User user = userService.updateUserAll(id, userRequest);
+        return userMapper.userToUserResponseDto(user);
+    }
+
+
+    @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<UserResponseDto> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return users.stream()
@@ -57,7 +66,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public UserResponseDto login(@RequestBody LoginDto loginDto) {
+    public LoginResponseDto login(@RequestBody LoginDto loginDto) {
         return userService.login(loginDto);
     }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout() {}
 }

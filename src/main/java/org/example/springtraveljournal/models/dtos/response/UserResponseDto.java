@@ -19,6 +19,18 @@ public class UserResponseDto {
         return name;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
