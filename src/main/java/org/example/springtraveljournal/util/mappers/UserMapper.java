@@ -24,7 +24,7 @@ public class UserMapper {
         return dto;
     }
 
-    public User userResponseDtoToUser(UserRequestCreateDto dto) {
+    public User userRequestCreateDto(UserRequestCreateDto dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setSurname(dto.getSurname());
