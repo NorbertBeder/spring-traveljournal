@@ -11,31 +11,14 @@ public class JournalResponseDto {
     private JournalVisibility visibility;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String ownerEmail;
     private Long ownerId;
-
-    public String getEmail() {
-        return ownerEmail;
-    }
-
-    public void setEmail(String email) {
-        this.ownerEmail = email;
-    }
-
+    
     public Long getOwnerId() {
         return ownerId;
     }
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -76,5 +59,13 @@ public class JournalResponseDto {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

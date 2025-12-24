@@ -14,9 +14,15 @@ import java.util.Optional;
 public interface JournalRepository extends JpaRepository<Journal, Long> {
 
     Optional<Journal> findByTitle(String title);
+
     List<Journal> findByOwner(User owner);
+
     List<Journal> findByVisibility(@NotBlank JournalVisibility visibility);
+
     List<Journal> findByOwnerEmail(String email);
+
     List<Journal> findByOwnerId(Long id);
+
+    List<Journal> findByTitleContainingIgnoreCase(String query);
 
 }

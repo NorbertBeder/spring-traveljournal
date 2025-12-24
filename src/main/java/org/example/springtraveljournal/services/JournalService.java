@@ -1,26 +1,28 @@
 package org.example.springtraveljournal.services;
 
+import org.example.springtraveljournal.models.dtos.request.JournalRequestCreateDto;
 import org.example.springtraveljournal.models.dtos.request.JournalRequestUpdateDto;
-import org.example.springtraveljournal.models.entities.Journal;
+import org.example.springtraveljournal.models.dtos.response.JournalResponseDto;
+import org.example.springtraveljournal.models.enums.JournalVisibility;
 
 import java.util.List;
 
 
 public interface JournalService {
 
-    Journal createJournal(Journal journal);
+    JournalResponseDto createJournal(JournalRequestCreateDto journalRequest);
 
-    List<Journal> getAllJournals();
+    List<JournalResponseDto> getMyJournals();
 
-    Journal getJournalById(Long id);
+    List<JournalResponseDto> getJournalsByVisibility(JournalVisibility visibility);
 
-    List<Journal> getByOwnerId(Long userId);
+    List<JournalResponseDto> searchJournalsWithQuery(String query);
 
-    List<Journal> getByOwnerEmail(String email);
+    List<JournalResponseDto> getByOwnerEmail(String email);
 
-    Journal updateJournalAll(Long id, JournalRequestUpdateDto updatedJournal);
+    JournalResponseDto updateJournalAll(Long id, JournalRequestCreateDto journalRequest);
 
-    Journal updateJournalPartial(Long id, JournalRequestUpdateDto updatedJournal);
+    JournalResponseDto updateJournalPartial(Long id, JournalRequestUpdateDto updatedJournal);
 
     void deleteJournal(Long id);
 }

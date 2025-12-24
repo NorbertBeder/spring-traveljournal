@@ -1,44 +1,90 @@
 package org.example.springtraveljournal.services.impl;
 
+import org.example.springtraveljournal.models.dtos.request.JournalRequestCreateDto;
 import org.example.springtraveljournal.models.dtos.request.JournalRequestUpdateDto;
+import org.example.springtraveljournal.models.dtos.response.JournalResponseDto;
 import org.example.springtraveljournal.models.entities.Journal;
+import org.example.springtraveljournal.models.entities.User;
+import org.example.springtraveljournal.models.enums.JournalVisibility;
 import org.example.springtraveljournal.repositories.JournalRepository;
+import org.example.springtraveljournal.repositories.UserRepository;
 import org.example.springtraveljournal.services.JournalService;
+import org.example.springtraveljournal.services.UserService;
+import org.example.springtraveljournal.util.SecurityUtil;
 import org.example.springtraveljournal.util.exceptions.ResourceNotFoundException;
+import org.example.springtraveljournal.util.mappers.JournalMapper;
+import org.example.springtraveljournal.util.mappers.UserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JournalServiceImpl implements JournalService {
 
     private final JournalRepository journalRepository;
+    private final UserRepository userRepository;
 
-    public JournalServiceImpl(JournalRepository journalRepository) {
+
+    public JournalServiceImpl(JournalRepository journalRepository, UserRepository userRepository, UserService userService, UserMapper userMapper) {
         this.journalRepository = journalRepository;
+        this.userRepository = userRepository;
     }
 
-    public Journal createJournal(Journal journal) {
-        return journalRepository.save(journal);
+    @Override
+    public JournalResponseDto createJournal(JournalRequestCreateDto journalRequest) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Journal journal = JournalMapper.journalRequestCreateDtoToJournal(journalRequest, user);
+        journalRepository.save(journal);
+        return JournalMapper.journalToJournalResponseDto(journal);
     }
 
-    public List<Journal> getAllJournals() {
-        return journalRepository.findAll();
+    @Override
+    public List<JournalResponseDto> getMyJournals() {
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        if (currentUserId == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
+        List<Journal> journals = journalRepository.findByOwnerId(currentUserId);
+        return journals.stream().map(JournalMapper::journalToJournalResponseDto).collect(Collectors.toList());
     }
 
-    public Journal getJournalById(Long id) {
-        return journalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Journal not found"));
+    @Override
+    public List<JournalResponseDto> getJournalsByVisibility(JournalVisibility visibility) {
+        if (visibility == null) {
+            throw new IllegalArgumentException("No visibility given");
+        }
+        List<Journal> journals = journalRepository.findByVisibility(visibility);
+        return journals.stream().map(JournalMapper::journalToJournalResponseDto).collect(Collectors.toList());
     }
 
-    public List<Journal> getByOwnerId(Long userId) {
-        return journalRepository.findByOwnerId(userId);
+    @Override
+    public List<JournalResponseDto> searchJournalsWithQuery(String query) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<Journal> journals = journalRepository.findByTitleContainingIgnoreCase(query)
+                .stream()
+                .filter(journal ->
+                        journal.getOwner().getId().equals(userId)
+                                || (journal.getVisibility() == JournalVisibility.PUBLIC)
+                                || (journal.getVisibility()) == JournalVisibility.FRIENDS)
+                .toList();
+        return journals.stream().map(JournalMapper::journalToJournalResponseDto).collect(Collectors.toList());
     }
 
-    public List<Journal> getByOwnerEmail(String email) {
-        return journalRepository.findByOwnerEmail(email);
+    @Override
+    public List<JournalResponseDto> getByOwnerEmail(String email) {
+        List<Journal> journals = journalRepository.findByOwnerEmail(email);
+        return journals.stream().map(JournalMapper::journalToJournalResponseDto).collect(Collectors.toList());
     }
 
-    public Journal updateJournalAll(Long id, JournalRequestUpdateDto updatedJournal) {
+    @Override
+    public JournalResponseDto updateJournalAll(Long id, JournalRequestCreateDto updatedJournal) {
         Journal existingJournal = journalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Journal not found"));
 
@@ -48,10 +94,11 @@ public class JournalServiceImpl implements JournalService {
         existingJournal.setEndDate(updatedJournal.getEndDate());
         existingJournal.setVisibility(updatedJournal.getVisibility());
 
-        return journalRepository.save(existingJournal);
+        journalRepository.save(existingJournal);
+        return JournalMapper.journalToJournalResponseDto(existingJournal);
     }
 
-    public Journal updateJournalPartial(Long id, JournalRequestUpdateDto updatedJournal) {
+    public JournalResponseDto updateJournalPartial(Long id, JournalRequestUpdateDto updatedJournal) {
         Journal existingJournal = journalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Journal not found"));
 
@@ -70,8 +117,8 @@ public class JournalServiceImpl implements JournalService {
         if (updatedJournal.getVisibility() != null) {
             existingJournal.setVisibility(updatedJournal.getVisibility());
         }
-
-        return journalRepository.save(existingJournal);
+        journalRepository.save(existingJournal);
+        return JournalMapper.journalToJournalResponseDto(existingJournal);
     }
 
     public void deleteJournal(Long id) {

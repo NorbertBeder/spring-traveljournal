@@ -1,12 +1,12 @@
 package org.example.springtraveljournal.util.mappers;
 
+import org.example.springtraveljournal.models.dtos.request.JournalRequestCreateDto;
 import org.example.springtraveljournal.models.dtos.response.JournalResponseDto;
 import org.example.springtraveljournal.models.entities.Journal;
-import org.springframework.stereotype.Component;
+import org.example.springtraveljournal.models.entities.User;
 
-@Component
 public class JournalMapper {
-    public JournalResponseDto journalToJournalResponseDto(Journal journal) {
+    public static JournalResponseDto journalToJournalResponseDto(Journal journal) {
         JournalResponseDto dto = new JournalResponseDto();
         dto.setId(journal.getId());
         dto.setTitle(journal.getTitle());
@@ -14,8 +14,18 @@ public class JournalMapper {
         dto.setVisibility(journal.getVisibility());
         dto.setStartDate(journal.getStartDate());
         dto.setEndDate(journal.getEndDate());
-        dto.setEmail(journal.getOwner().getEmail());
         dto.setOwnerId(journal.getOwner().getId());
         return dto;
+    }
+
+    public static Journal journalRequestCreateDtoToJournal(JournalRequestCreateDto dto, User owner) {
+        Journal journal = new Journal();
+        journal.setOwner(owner);
+        journal.setTitle(dto.getTitle());
+        journal.setDescription(dto.getDescription());
+        journal.setVisibility(dto.getVisibility());
+        journal.setStartDate(dto.getStartDate());
+        journal.setEndDate(dto.getEndDate());
+        return journal;
     }
 }
