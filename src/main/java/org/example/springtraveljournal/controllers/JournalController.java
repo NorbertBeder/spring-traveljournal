@@ -41,6 +41,7 @@ public class JournalController {
         return journalService.searchJournalsWithQuery(query);
     }
 
+    // FIX PRIVATE
     @GetMapping("/user")
     public List<JournalResponseDto> getJournalsByUserEmail(@RequestParam String email) {
         return journalService.getByOwnerEmail(email);

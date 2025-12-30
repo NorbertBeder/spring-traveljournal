@@ -40,6 +40,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserEntity(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public User getUserEntityByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
     public UserResponseDto createUser(UserRequestCreateDto userRequest) {
         if (userRequest.getName() == null || userRequest.getSurname() == null || userRequest.getEmail() == null) {
             throw new BadRequestException("Invalid user data");

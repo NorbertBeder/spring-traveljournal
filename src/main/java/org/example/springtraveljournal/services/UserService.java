@@ -5,12 +5,17 @@ import org.example.springtraveljournal.models.dtos.request.UserRequestCreateDto;
 import org.example.springtraveljournal.models.dtos.request.UserRequestUpdateDto;
 import org.example.springtraveljournal.models.dtos.response.LoginResponseDto;
 import org.example.springtraveljournal.models.dtos.response.UserResponseDto;
+import org.example.springtraveljournal.models.entities.User;
 
 import java.util.List;
 
 public interface UserService {
 
     UserResponseDto getUser(Long id);
+
+    User getUserEntity(Long id);
+
+    User getUserEntityByEmail(String email);
 
     UserResponseDto createUser(UserRequestCreateDto userRequest);
 

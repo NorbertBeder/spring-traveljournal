@@ -12,3 +12,14 @@ CREATE TABLE users
 
 ALTER TABLE users
     ADD CONSTRAINT uc_users_email UNIQUE (email);
+ALTER TABLE friend_requests
+    DROP COLUMN created_at;
+
+ALTER TABLE friend_requests
+    ADD created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL;
+
+ALTER TABLE journals
+    ALTER COLUMN title DROP NOT NULL;
+
+ALTER TABLE journals
+    ALTER COLUMN visibility DROP NOT NULL;
