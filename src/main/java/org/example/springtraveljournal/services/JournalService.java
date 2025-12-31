@@ -18,8 +18,6 @@ public interface JournalService {
 
     List<JournalResponseDto> searchJournalsWithQuery(String query);
 
-    List<JournalResponseDto> getByOwnerEmail(String email);
-
     JournalResponseDto updateJournalAll(Long id, JournalRequestCreateDto journalRequest);
 
     JournalResponseDto updateJournalPartial(Long id, JournalRequestUpdateDto updatedJournal);

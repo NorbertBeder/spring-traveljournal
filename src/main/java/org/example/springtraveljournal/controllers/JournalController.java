@@ -41,12 +41,6 @@ public class JournalController {
         return journalService.searchJournalsWithQuery(query);
     }
 
-    // FIX PRIVATE
-    @GetMapping("/user")
-    public List<JournalResponseDto> getJournalsByUserEmail(@RequestParam String email) {
-        return journalService.getByOwnerEmail(email);
-    }
-
     @PutMapping("/update/{id}")
     public JournalResponseDto updateJournalAll(@PathVariable Long id, @RequestBody JournalRequestCreateDto journalRequest) {
         return journalService.updateJournalAll(id, journalRequest);

@@ -116,12 +116,6 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public List<JournalResponseDto> getByOwnerEmail(String email) {
-        List<Journal> journals = journalRepository.findByOwnerEmail(email);
-        return journals.stream().map(JournalMapper::journalToJournalResponseDto).collect(Collectors.toList());
-    }
-
-    @Override
     public JournalResponseDto updateJournalAll(Long id, JournalRequestCreateDto updatedJournal) {
         Journal existingJournal = getOwnedJournalOrThrow(id);
 
