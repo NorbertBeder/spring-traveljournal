@@ -7,7 +7,6 @@ import org.example.springtraveljournal.models.dtos.request.UserRequestUpdateDto;
 import org.example.springtraveljournal.models.dtos.response.LoginResponseDto;
 import org.example.springtraveljournal.models.dtos.response.UserResponseDto;
 import org.example.springtraveljournal.services.UserService;
-import org.example.springtraveljournal.util.mappers.UserMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -43,7 +42,7 @@ public class UserController {
     public UserResponseDto updateUserAll(@PathVariable Long id, @RequestBody @Valid UserRequestCreateDto userRequest) {
         return userService.updateUserAll(id, userRequest);
     }
-    
+
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

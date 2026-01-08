@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -89,6 +90,18 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateUserPartial(Long id, UserRequestUpdateDto userRequest) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        String newName = userRequest.getName();
+        String newSurname = userRequest.getSurname();
+        String newEmail = userRequest.getEmail();
+
+        String oldName = existingUser.getName();
+        String oldSurname = existingUser.getSurname();
+        String oldEmail = existingUser.getEmail();
+
+        if (Objects.equals(newName, oldName) && Objects.equals(newSurname, oldSurname) && Objects.equals(newEmail, oldEmail)) {
+            throw new BadRequestException("No changes provided");
+        }
+
         if (userRequest.getName() != null) {
             existingUser.setName(userRequest.getName());
         }
@@ -100,6 +113,7 @@ public class UserServiceImpl implements UserService {
         if (userRequest.getEmail() != null) {
             existingUser.setEmail(userRequest.getEmail());
         }
+
         userRepository.save(existingUser);
 
         return userMapper.userToUserResponseDto(existingUser);
