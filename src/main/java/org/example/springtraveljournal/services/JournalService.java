@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface JournalService {
 
+    JournalResponseDto getJournalById(Long id);
+
     JournalResponseDto createJournal(JournalRequestCreateDto journalRequest);
 
     List<JournalResponseDto> getMyJournals();

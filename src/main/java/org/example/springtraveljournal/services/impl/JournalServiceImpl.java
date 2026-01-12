@@ -36,6 +36,27 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
+    public JournalResponseDto getJournalById(Long id) {
+        Journal journal = journalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Journal not found"));
+
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<Long> friendIds = friendRequestService.getFriendIds(userId);
+
+        boolean hasAccess = switch (journal.getVisibility()) {
+            case PUBLIC -> true;
+            case FRIENDS -> friendIds.contains(journal.getOwner().getId());
+            case PRIVATE -> journal.getOwner().getId().equals(userId);
+        };
+
+        if (!hasAccess) {
+            throw new ForbiddenException("You do not have access to this journal");
+        }
+
+        return JournalMapper.journalToJournalResponseDto(journal);
+    }
+
+    @Override
     public JournalResponseDto createJournal(JournalRequestCreateDto journalRequest) {
         Long userId = SecurityUtil.getCurrentUserId();
         if (userId == null) {

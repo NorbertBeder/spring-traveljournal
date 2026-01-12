@@ -25,6 +25,10 @@ public class JournalController {
         return journalService.createJournal(journalRequest);
     }
 
+    @GetMapping("/id/{id}")
+    public JournalResponseDto getJournalById(@PathVariable Long id) {
+        return journalService.getJournalById(id);
+    }
 
     @GetMapping("/{visibility}")
     public List<JournalResponseDto> getJournalsByVisibility(@PathVariable JournalVisibility visibility) {
